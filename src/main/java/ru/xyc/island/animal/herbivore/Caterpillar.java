@@ -13,12 +13,12 @@ public class Caterpillar extends Herbivore {
 
     @Override
     public Caterpillar reproduction() {
-        int random = (int) (Math.random() * 4);
+        int random = (int) (Math.random() * 3);
 
         if (random == 0) {
             if (!isEat && !isMovie()) {
                 isReproduce = true;
-                fullSaturation -= fullSaturation / 10;
+                fullSaturation -= 0.0005;
                 return new Caterpillar("\uD83D\uDC1B", 0.01, 10000, 1, 0.15, 1);
             }
         }
@@ -47,7 +47,7 @@ public class Caterpillar extends Herbivore {
     @Override
     public void movie(char direction, int distance) {
         if (!isEat && !isReproduce) {
-            fullSaturation -= fullSaturation / 10;
+            fullSaturation -= 0.0005;
         }
 
     }

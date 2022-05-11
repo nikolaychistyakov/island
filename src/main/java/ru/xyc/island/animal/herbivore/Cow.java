@@ -1,9 +1,7 @@
 package ru.xyc.island.animal.herbivore;
 
-import ru.xyc.island.animal.Animal;
-
-public class Duck extends Herbivore {
-    public Duck(String icon, double weight, int maximumNumberOfAnimals, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
+public class Cow extends Herbivore{
+    public Cow(String icon, double weight, int maximumNumberOfAnimals, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
         super(icon, weight, maximumNumberOfAnimals, travelSpeed, fullSaturation, canLiveAfterSaturation);
     }
 
@@ -24,6 +22,7 @@ public class Duck extends Herbivore {
 
     @Override
     public String toString() {
-        return "\uD83E\uDD86";
+        return "\uD83D\uDC2E";
     }
 }
+
