@@ -11,17 +11,13 @@ public abstract class Animal implements Breedable, Eatable, Movable {
     public boolean isEat;
     public boolean isMovie;
     public boolean isReproduce;
-    public String icon;
-    public double weight;
-    public int maximumNumberOfAnimals;
-    public int travelSpeed;
+    double weight;
+    int travelSpeed;
     public double fullSaturation;
-    public int canLiveAfterSaturation;
+    int canLiveAfterSaturation;
 
-    public Animal(String icon, double weight, int maximumNumberOfAnimals, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
-        this.icon = icon;
+    public Animal(double weight, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
         this.weight = weight;
-        this.maximumNumberOfAnimals = maximumNumberOfAnimals;
         this.travelSpeed = travelSpeed;
         this.fullSaturation = fullSaturation;
         this.canLiveAfterSaturation = canLiveAfterSaturation;
@@ -51,13 +47,6 @@ public abstract class Animal implements Breedable, Eatable, Movable {
         isReproduce = reproduce;
     }
 
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
 
     public double getWeight() {
         return weight;
@@ -65,14 +54,6 @@ public abstract class Animal implements Breedable, Eatable, Movable {
 
     public void setWeight(double weight) {
         this.weight = weight;
-    }
-
-    public int getMaximumNumberOfAnimals() {
-        return maximumNumberOfAnimals;
-    }
-
-    public void setMaximumNumberOfAnimals(int maximumNumberOfAnimals) {
-        this.maximumNumberOfAnimals = maximumNumberOfAnimals;
     }
 
     public int getTravelSpeed() {
@@ -104,11 +85,11 @@ public abstract class Animal implements Breedable, Eatable, Movable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return Double.compare(animal.weight, weight) == 0 && maximumNumberOfAnimals == animal.maximumNumberOfAnimals && travelSpeed == animal.travelSpeed && Double.compare(animal.fullSaturation, fullSaturation) == 0 && canLiveAfterSaturation == animal.canLiveAfterSaturation && Objects.equals(icon, animal.icon);
+        return isEat == animal.isEat && isMovie == animal.isMovie && isReproduce == animal.isReproduce && Double.compare(animal.weight, weight) == 0 && travelSpeed == animal.travelSpeed && Double.compare(animal.fullSaturation, fullSaturation) == 0 && canLiveAfterSaturation == animal.canLiveAfterSaturation;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(icon, weight, maximumNumberOfAnimals, travelSpeed, fullSaturation, canLiveAfterSaturation);
+        return Objects.hash(isEat, isMovie, isReproduce, weight, travelSpeed, fullSaturation, canLiveAfterSaturation);
     }
 }

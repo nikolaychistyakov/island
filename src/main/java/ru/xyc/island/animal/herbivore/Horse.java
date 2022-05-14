@@ -1,8 +1,10 @@
 package ru.xyc.island.animal.herbivore;
 
 public class Horse extends Herbivore {
-    public Horse(String icon, double weight, int maximumNumberOfAnimals, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
-        super(icon, weight, maximumNumberOfAnimals, travelSpeed, fullSaturation, canLiveAfterSaturation);
+
+
+    public Horse(double weight, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
+        super(weight, travelSpeed, fullSaturation, canLiveAfterSaturation);
     }
 
     @Override

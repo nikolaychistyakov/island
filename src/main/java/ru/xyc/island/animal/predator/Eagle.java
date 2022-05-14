@@ -3,8 +3,10 @@ package ru.xyc.island.animal.predator;
 import ru.xyc.island.animal.predator.Predator;
 
 public class Eagle extends Predator {
-    public Eagle(String icon, double weight, int maximumNumberOfAnimals, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
-        super(icon, weight, maximumNumberOfAnimals, travelSpeed, fullSaturation, canLiveAfterSaturation);
+
+
+    public Eagle(double weight, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
+        super(weight, travelSpeed, fullSaturation, canLiveAfterSaturation);
     }
 
     @Override

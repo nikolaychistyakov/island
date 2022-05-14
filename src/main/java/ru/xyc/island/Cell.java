@@ -2,12 +2,14 @@ package ru.xyc.island;
 
 import ru.xyc.island.animal.Animal;
 import ru.xyc.island.animal.Plantation;
-import ru.xyc.island.animal.herbivore.*;
-import ru.xyc.island.animal.predator.*;
+import ru.xyc.island.animal.herbivore.Caterpillar;
+import ru.xyc.island.animal.herbivore.Hamster;
+import ru.xyc.island.animal.herbivore.Herbivore;
+import ru.xyc.island.animal.predator.Wolf;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static ru.xyc.island.Main.island;
@@ -15,7 +17,6 @@ import static ru.xyc.island.Main.island;
 public class Cell {
     private List<Animal> animals = new CopyOnWriteArrayList<>();
     private List<Plantation> plantations = new CopyOnWriteArrayList<>();
-
 
     public List<Animal> getAnimals() {
         return animals;
@@ -36,17 +37,15 @@ public class Cell {
 
     public void reproductionOnCell() {
 
-        List<Animal> collectCaterpillar = animals.stream().filter(animal -> animal instanceof Caterpillar).toList();
-        List<Animal> collectHamster = animals.stream().filter(animal -> animal instanceof Hamster).toList();
+        Map<String, Integer> countAnimalsOnCell = getCountAnimalsOnCell();
 
-        if (collectCaterpillar.size() >= 2) {
-            for (int i = 0; i < collectCaterpillar.size() / 2; i++) {
-                animals.add((Caterpillar) collectCaterpillar.get(i).reproduction());
-            }
-        }
-        if (collectHamster.size() >= 2) {
-            for (int i = 0; i < collectHamster.size() / 2; i++) {
-                animals.add((Hamster) collectHamster.get(i).reproduction());
+        for (Map.Entry<String, Integer> countAnimals: countAnimalsOnCell.entrySet()) {
+            if(countAnimals.getValue() >= 2) {
+                for (int i = 0; i < animals.size(); i++) {
+                    if(animals.get(i).getClass().getSimpleName().equals(countAnimals.getKey())) {
+                        animals.add((Animal) animals.get(i).reproduction());
+                    }
+                }
             }
         }
     }
@@ -112,130 +111,61 @@ public class Cell {
                     plantations.remove(j);
                 }
 
-                if(animals.get(i) instanceof Wolf) {
+                if (animals.get(i) instanceof Wolf) {
 
                 }
-
             }
         }
-
-
     }
 
     public void toDieOfOverflowOrHunger() {
 
-        long countCaterpillar = animals.stream().filter(a -> a instanceof Caterpillar).count();
-        long countHamster = animals.stream().filter(a -> a instanceof Hamster).count();
-        if (countCaterpillar > 10000) {
-            animals.removeIf(animal -> animal instanceof Caterpillar);
-        }
-        if (countHamster > 10000) {
-            animals.removeIf(animal -> animal instanceof Hamster);
-        }
+        Map<String, Integer> countAnimalsOnCell = getCountAnimalsOnCell();
 
+        Map<String, Integer> getMax = getMaxOnCell();
+
+        //overflow
+        for (Map.Entry<String, Integer> countAnimals : countAnimalsOnCell.entrySet()) {
+            for (Map.Entry<String, Integer> maxAnimals : getMax.entrySet()) {
+                if(countAnimals.getKey().equals(maxAnimals.getKey())) {
+                    if (countAnimals.getValue() > maxAnimals.getValue()) {
+                        String simpleName = countAnimals.getKey().getClass().getSimpleName();
+                        animals.removeIf(animal -> animal.getClass().getSimpleName().equals(simpleName));
+                    }
+                }
+            }
+        }
+        //hunger
         for (int i = 0; i < animals.size(); i++) {
             if (animals.get(i) != null && animals.get(i).fullSaturation <= 0) {
                 animals.remove(i);
             }
         }
-
-
     }
 
-    public String getTopAnimalOnCell() {
+
+    public String showMaxCountAnimalsOnCell() {
+
+        Map<String, Integer> map = getCountAnimalsOnCell();
+
+        int max = map.values().stream().max(Integer::compareTo).orElse(0);
+        String s = "?";
+        for (Map.Entry<String, Integer> m : map.entrySet()) {
+            if (m.getValue() == max) {
+                s = m.getKey();
+            }
+        }
+
         long countPlantations = plantations.size();
-        long countCaterpillar = animals.stream().filter(a -> a instanceof Caterpillar).count();
-        long countHamster = animals.stream().filter(a -> a instanceof Hamster).count();
-        long countDuck = animals.stream().filter(a -> a instanceof Duck).count();
-        long countCow = animals.stream().filter(a -> a instanceof Cow).count();
-        long countKangaroo = animals.stream().filter(a -> a instanceof Kangaroo).count();
-        long countSheep = animals.stream().filter(a -> a instanceof Sheep).count();
-        long countGoat = animals.stream().filter(a -> a instanceof Goat).count();
-        long countRabbit = animals.stream().filter(a -> a instanceof Rabbit).count();
-        long countDeer = animals.stream().filter(a -> a instanceof Deer).count();
-        long countHorse = animals.stream().filter(a -> a instanceof Horse).count();
-        long countEagle = animals.stream().filter(a -> a instanceof Eagle).count();
-        long countSnake = animals.stream().filter(a -> a instanceof Snake).count();
-        long countWolf = animals.stream().filter(a -> a instanceof Wolf).count();
-        long countBear = animals.stream().filter(a -> a instanceof Bear).count();
-        long countFox = animals.stream().filter(a -> a instanceof Fox).count();
 
 
-        List<Long> longs = new ArrayList<>();
-        longs.add(countCaterpillar);
-        longs.add(countHamster);
-        longs.add(countDuck);
-        longs.add(countCow);
-        longs.add(countSheep);
-        longs.add(countGoat);
-        longs.add(countRabbit);
-        longs.add(countDeer);
-        longs.add(countHorse);
-        longs.add(countKangaroo);
-        longs.add(countSnake);
-        longs.add(countEagle);
-        longs.add(countWolf);
-        longs.add(countBear);
-        longs.add(countFox);
-
-        Collections.sort(longs);
-        Collections.reverse(longs);
-
-        long max = longs.get(0);
-
-        if (max >= countPlantations) {
-            if (countCaterpillar != 0 && max == countCaterpillar) {
-                return "\uD83D\uDC1B" + countCaterpillar;
+        if (animals.size() > 0) {
+            Map<String, String> icon = getIcon();
+            for (Map.Entry<String, String> m : icon.entrySet()) {
+                if (m.getKey().equals(s)) {
+                    return m.getValue() + max;
+                }
             }
-
-            if (countHamster != 0 && max == countHamster) {
-                return "\uD83D\uDC39" + countHamster;
-            }
-
-            if (countDuck != 0 && max == countDuck) {
-                return "\uD83E\uDD86" + countDuck;
-            }
-
-            if (countCow != 0 && max == countCow) {
-                return "\uD83D\uDC2E" + countCow;
-            }
-
-            if (countDeer != 0 && max == countDeer) {
-                return "\uD83E\uDD85" + countDeer;
-            }
-
-            if (countRabbit != 0 && max == countRabbit) {
-                return "\uD83D\uDC07" + countRabbit ;
-            }
-            if (countHorse != 0 & max == countHorse) {
-                return "\uD83D\uDC0E" + countHorse;
-            }
-            if (countGoat != 0 && max == countGoat) {
-                return  "\uD83D\uDC10" + countGoat;
-            }
-            if (countSheep != 0 && max == countSheep) {
-                return  "\uD83D\uDC11" + countSheep;
-            }
-            if (countKangaroo != 0 && max == countKangaroo) {
-                return "\uD83E\uDD98" + countKangaroo;
-            }
-            if (countEagle != 0 && max == countEagle) {
-                return  "\uD83E\uDD85" + countEagle;
-            }
-            if (countSnake != 0 && max == countSnake) {
-                return "\uD83D\uDC0D" + countSnake;
-            }
-            if (countBear != 0 && max == countBear) {
-                return "\uD83D\uDC3B" + countBear;
-            }
-            if (countFox != 0 && max == countFox) {
-                return  "\uD83E\uDD8A" + countFox;
-            }
-            if (countWolf != 0 && max == countWolf) {
-                return "\uD83D\uDC3A" + countWolf;
-            }
-
-
         } else {
             if (countPlantations != 0) {
                 return "\uD83C\uDF40";
@@ -243,8 +173,65 @@ public class Cell {
                 return "\u2796";
             }
         }
-
         return "\u2796";
     }
 
+    private Map<String, Integer> getCountAnimalsOnCell() {
+        Map<String, Integer> map = new ConcurrentHashMap<>();
+
+        for (int i = 0; i < animals.size(); i++) {
+            Animal animal = animals.get(i);
+            if (animal != null) {
+                String name = animal.getClass().getSimpleName();
+                if (!map.containsKey(name)) {
+                    map.put(name, 1);
+                } else {
+                    map.put(name, map.get(name) + 1);
+                }
+            }
+        }
+        return map;
+    }
+
+    private Map<String, String> getIcon() {
+        Map<String, String> iconsAnimals = new ConcurrentHashMap<>();
+        iconsAnimals.put("Hamster", "\uD83D\uDC39");
+        iconsAnimals.put("Duck", "\uD83E\uDD86");
+        iconsAnimals.put("Cow", "\uD83D\uDC2E");
+        iconsAnimals.put("Deer", "\uD83E\uDD8C");
+        iconsAnimals.put("Goat", "\uD83D\uDC10");
+        iconsAnimals.put("Horse", "\uD83D\uDC0E");
+        iconsAnimals.put("Kangaroo", "\uD83E\uDD98");
+        iconsAnimals.put("Rabbit", "\uD83D\uDC07");
+        iconsAnimals.put("Sheep", "\uD83D\uDC11");
+        iconsAnimals.put("Caterpillar", "\uD83D\uDC1B");
+        iconsAnimals.put("Wolf", "\uD83D\uDC3A");
+        iconsAnimals.put("Eagle", "\uD83E\uDD85");
+        iconsAnimals.put("Bear", "\uD83D\uDC3B");
+        iconsAnimals.put("Fox", "\uD83E\uDD8A");
+        iconsAnimals.put("Snake", "\uD83D\uDC0D");
+
+        return iconsAnimals;
+    }
+
+    private Map<String, Integer> getMaxOnCell() {
+        Map<String, Integer> getMaxAnimalsOnCell = new ConcurrentHashMap<>();
+        getMaxAnimalsOnCell.put("Hamster", 10000);
+        getMaxAnimalsOnCell.put("Duck", 500);
+        getMaxAnimalsOnCell.put("Cow", 20);
+        getMaxAnimalsOnCell.put("Deer", 41);
+        getMaxAnimalsOnCell.put("Goat", 107);
+        getMaxAnimalsOnCell.put("Horse", 23);
+        getMaxAnimalsOnCell.put("Kangaroo", 149);
+        getMaxAnimalsOnCell.put("Rabbit", 750);
+        getMaxAnimalsOnCell.put("Sheep", 156);
+        getMaxAnimalsOnCell.put("Caterpillar", 10000);
+        getMaxAnimalsOnCell.put("Wolf", 30);
+        getMaxAnimalsOnCell.put("Eagle", 166);
+        getMaxAnimalsOnCell.put("Bear", 7);
+        getMaxAnimalsOnCell.put("Fox", 50);
+        getMaxAnimalsOnCell.put("Snake", 123);
+
+        return getMaxAnimalsOnCell;
+    }
 }

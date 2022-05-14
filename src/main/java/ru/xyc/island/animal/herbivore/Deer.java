@@ -1,8 +1,10 @@
 package ru.xyc.island.animal.herbivore;
 
 public class Deer extends Herbivore{
-    public Deer(String icon, double weight, int maximumNumberOfAnimals, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
-        super(icon, weight, maximumNumberOfAnimals, travelSpeed, fullSaturation, canLiveAfterSaturation);
+
+
+    public Deer(double weight, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
+        super(weight, travelSpeed, fullSaturation, canLiveAfterSaturation);
     }
 
     @Override

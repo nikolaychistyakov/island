@@ -2,13 +2,11 @@ package ru.xyc.island.animal.herbivore;
 
 import ru.xyc.island.animal.Plantation;
 
-import java.util.Random;
-
 public class Caterpillar extends Herbivore {
 
 
-    public Caterpillar(String icon, double weight, int maximumNumberOfAnimals, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
-        super(icon, weight, maximumNumberOfAnimals, travelSpeed, fullSaturation, canLiveAfterSaturation);
+    public Caterpillar(double weight, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
+        super(weight, travelSpeed, fullSaturation, canLiveAfterSaturation);
     }
 
     @Override
@@ -19,7 +17,7 @@ public class Caterpillar extends Herbivore {
             if (!isEat && !isMovie()) {
                 isReproduce = true;
                 fullSaturation -= 0.0005;
-                return new Caterpillar("\uD83D\uDC1B", 0.01, 10000, 1, 0.15, 1);
+                return new Caterpillar(0.01,  1, 0.15, 1);
             }
         }
         isReproduce = false;
@@ -50,11 +48,6 @@ public class Caterpillar extends Herbivore {
             fullSaturation -= 0.0005;
         }
 
-    }
-
-    @Override
-    public String toString() {
-        return icon;
     }
 
     @Override

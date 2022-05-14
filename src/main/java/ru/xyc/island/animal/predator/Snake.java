@@ -1,8 +1,9 @@
 package ru.xyc.island.animal.predator;
 
 public class Snake extends Predator{
-    public Snake(String icon, double weight, int maximumNumberOfAnimals, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
-        super(icon,weight, maximumNumberOfAnimals, travelSpeed, fullSaturation, canLiveAfterSaturation);
+
+    public Snake(double weight, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
+        super(weight, travelSpeed, fullSaturation, canLiveAfterSaturation);
     }
 
     @Override
