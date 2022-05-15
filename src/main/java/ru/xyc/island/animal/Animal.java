@@ -14,7 +14,7 @@ public abstract class Animal implements Breedable, Eatable, Movable {
     double weight;
     int travelSpeed;
     public double fullSaturation;
-    int canLiveAfterSaturation;
+    public int canLiveAfterSaturation;
 
     public Animal(double weight, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
         this.weight = weight;

@@ -2,15 +2,15 @@ package ru.xyc.island;
 
 import ru.xyc.island.animal.Animal;
 import ru.xyc.island.animal.Plantation;
-import ru.xyc.island.animal.herbivore.Caterpillar;
-import ru.xyc.island.animal.herbivore.Hamster;
 import ru.xyc.island.animal.herbivore.Herbivore;
+import ru.xyc.island.animal.predator.Snake;
 import ru.xyc.island.animal.predator.Wolf;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static ru.xyc.island.Main.island;
 
@@ -35,14 +35,13 @@ public class Cell {
     }
 
 
-    public void reproductionOnCell() {
+    public void reproductionInCell() {
 
-        Map<String, Integer> countAnimalsOnCell = getCountAnimalsOnCell();
-
-        for (Map.Entry<String, Integer> countAnimals: countAnimalsOnCell.entrySet()) {
-            if(countAnimals.getValue() >= 2) {
+        Map<String, Integer> countAnimalsOnCell = getCountAnimalsInCell();
+        for (Map.Entry<String, Integer> countAnimals : countAnimalsOnCell.entrySet()) {
+            if (countAnimals.getValue() >= 2) {
                 for (int i = 0; i < animals.size(); i++) {
-                    if(animals.get(i).getClass().getSimpleName().equals(countAnimals.getKey())) {
+                    if (animals.get(i).getClass().getSimpleName().equals(countAnimals.getKey())) {
                         animals.add((Animal) animals.get(i).reproduction());
                     }
                 }
@@ -50,7 +49,7 @@ public class Cell {
         }
     }
 
-    public static void movie() {
+    public static void movieAnimalsAroundTheIsland() {
 
         for (int i = 0; i < island.length; i++) {
             for (int j = 0; j < island[i].length; j++) {
@@ -102,17 +101,31 @@ public class Cell {
         }
     }
 
-    public void eatOnCell() {
+    public void eatingInCell() {
 
         for (int i = 0; i < animals.size(); i++) {
             for (int j = 0; j < plantations.size(); j++) {
                 if (animals.get(i) instanceof Herbivore) {
                     animals.get(i).eat(plantations.get(j));
-                    plantations.remove(j);
+
+                    plantations.remove(plantations.get(j));
                 }
+            }
+        }
 
-                if (animals.get(i) instanceof Wolf) {
-
+        for (int i = 0; i < animals.size(); i++) {
+            Animal animal1 = animals.get(i);
+            for (int j = 0; j < animals.size(); j++) {
+                Animal animal2 = animals.get(j);
+                if (!animal1.getClass().getSimpleName().equals(animal2.getClass().getSimpleName())) {
+                    if (animal1 instanceof Wolf) {
+                        if (animal2 instanceof Snake) {
+                            int random = ThreadLocalRandom.current().nextInt(9);
+                            if (random == 0) {
+                                animals.remove(animal2);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -120,33 +133,47 @@ public class Cell {
 
     public void toDieOfOverflowOrHunger() {
 
-        Map<String, Integer> countAnimalsOnCell = getCountAnimalsOnCell();
+        //remove null
+        for (int i = 0; i < animals.size(); i++) {
+            if (animals.get(i) == null) {
+                animals.remove(i);
+            }
+        }
 
-        Map<String, Integer> getMax = getMaxOnCell();
+        Map<String, Integer> countAnimalsOnCell = getCountAnimalsInCell();
+
+        Map<String, Integer> getMax = getMaxAnimalsOnCell();
+
+//        System.out.print(countAnimalsOnCell);
+//        System.out.println(getMax);
 
         //overflow
         for (Map.Entry<String, Integer> countAnimals : countAnimalsOnCell.entrySet()) {
             for (Map.Entry<String, Integer> maxAnimals : getMax.entrySet()) {
-                if(countAnimals.getKey().equals(maxAnimals.getKey())) {
-                    if (countAnimals.getValue() > maxAnimals.getValue()) {
-                        String simpleName = countAnimals.getKey().getClass().getSimpleName();
-                        animals.removeIf(animal -> animal.getClass().getSimpleName().equals(simpleName));
+                if (countAnimals.getKey().equals(maxAnimals.getKey())) {
+                    if (countAnimals.getValue() >= maxAnimals.getValue()) {
+                        animals.removeIf(animal -> animal.getClass().getSimpleName()
+                                .equalsIgnoreCase(countAnimals.getKey()));
                     }
                 }
             }
         }
         //hunger
         for (int i = 0; i < animals.size(); i++) {
-            if (animals.get(i) != null && animals.get(i).fullSaturation <= 0) {
-                animals.remove(i);
+            Animal animal = animals.get(i);
+            if (animal != null && animal.fullSaturation <= 0) {
+                animal.canLiveAfterSaturation -= 1;
+            }
+            if (animal != null && animal.getCanLiveAfterSaturation() <= 0) {
+                animals.remove(animal);
             }
         }
     }
 
 
-    public String showMaxCountAnimalsOnCell() {
+    public String showPopularAnimalInCell() {
 
-        Map<String, Integer> map = getCountAnimalsOnCell();
+        Map<String, Integer> map = getCountAnimalsInCell();
 
         int max = map.values().stream().max(Integer::compareTo).orElse(0);
         String s = "?";
@@ -176,7 +203,7 @@ public class Cell {
         return "\u2796";
     }
 
-    private Map<String, Integer> getCountAnimalsOnCell() {
+    private Map<String, Integer> getCountAnimalsInCell() {
         Map<String, Integer> map = new ConcurrentHashMap<>();
 
         for (int i = 0; i < animals.size(); i++) {
@@ -214,24 +241,24 @@ public class Cell {
         return iconsAnimals;
     }
 
-    private Map<String, Integer> getMaxOnCell() {
-        Map<String, Integer> getMaxAnimalsOnCell = new ConcurrentHashMap<>();
-        getMaxAnimalsOnCell.put("Hamster", 10000);
-        getMaxAnimalsOnCell.put("Duck", 500);
-        getMaxAnimalsOnCell.put("Cow", 20);
-        getMaxAnimalsOnCell.put("Deer", 41);
-        getMaxAnimalsOnCell.put("Goat", 107);
-        getMaxAnimalsOnCell.put("Horse", 23);
-        getMaxAnimalsOnCell.put("Kangaroo", 149);
-        getMaxAnimalsOnCell.put("Rabbit", 750);
-        getMaxAnimalsOnCell.put("Sheep", 156);
-        getMaxAnimalsOnCell.put("Caterpillar", 10000);
-        getMaxAnimalsOnCell.put("Wolf", 30);
-        getMaxAnimalsOnCell.put("Eagle", 166);
-        getMaxAnimalsOnCell.put("Bear", 7);
-        getMaxAnimalsOnCell.put("Fox", 50);
-        getMaxAnimalsOnCell.put("Snake", 123);
+    private Map<String, Integer> getMaxAnimalsOnCell() {
+        Map<String, Integer> maxAnimalsOnCell = new ConcurrentHashMap<>();
+        maxAnimalsOnCell.put("Hamster", 10000);
+        maxAnimalsOnCell.put("Duck", 500);
+        maxAnimalsOnCell.put("Cow", 20);
+        maxAnimalsOnCell.put("Deer", 41);
+        maxAnimalsOnCell.put("Goat", 107);
+        maxAnimalsOnCell.put("Horse", 23);
+        maxAnimalsOnCell.put("Kangaroo", 149);
+        maxAnimalsOnCell.put("Rabbit", 750);
+        maxAnimalsOnCell.put("Sheep", 156);
+        maxAnimalsOnCell.put("Caterpillar", 10000);
+        maxAnimalsOnCell.put("Wolf", 30);
+        maxAnimalsOnCell.put("Eagle", 166);
+        maxAnimalsOnCell.put("Bear", 7);
+        maxAnimalsOnCell.put("Fox", 50);
+        maxAnimalsOnCell.put("Snake", 123);
 
-        return getMaxAnimalsOnCell;
+        return maxAnimalsOnCell;
     }
 }
