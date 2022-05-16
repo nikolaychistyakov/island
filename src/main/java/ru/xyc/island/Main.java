@@ -30,6 +30,7 @@ public class Main {
         }
 
         island[10][45] = addAnimals();
+        island[11][46] = addAnimals();
 
         ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
         ExecutorService executorService = Executors.newFixedThreadPool(4);

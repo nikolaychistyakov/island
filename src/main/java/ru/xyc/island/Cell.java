@@ -228,7 +228,7 @@ public class Cell {
             Map<String, String> icon = getIcon();
             for (Map.Entry<String, String> m : icon.entrySet()) {
                 if (m.getKey().equals(s)) {
-                    return m.getValue();
+                    return m.getValue() + max;
                 }
             }
         } else {
