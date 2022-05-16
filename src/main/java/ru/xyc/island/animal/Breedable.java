@@ -1,4 +1,4 @@
-package ru.xyc.island;
+package ru.xyc.island.animal;
 
 public interface Breedable {
     Object reproduction();

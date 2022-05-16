@@ -3,8 +3,7 @@ package ru.xyc.island;
 import ru.xyc.island.animal.Animal;
 import ru.xyc.island.animal.Plantation;
 import ru.xyc.island.animal.herbivore.Herbivore;
-import ru.xyc.island.animal.predator.Snake;
-import ru.xyc.island.animal.predator.Wolf;
+import ru.xyc.island.animal.predator.*;
 
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,6 @@ public class Cell {
 
         for (int i = 0; i < island.length; i++) {
             for (int j = 0; j < island[i].length; j++) {
-
 
                 List<Animal> animals = island[i][j].getAnimals();
 
@@ -107,6 +105,7 @@ public class Cell {
             for (int j = 0; j < plantations.size(); j++) {
                 if (animals.get(i) instanceof Herbivore) {
                     animals.get(i).eat(plantations.get(j));
+                    animals.get(i).fullSaturation += 1;
 
                     plantations.remove(plantations.get(j));
                 }
@@ -117,11 +116,52 @@ public class Cell {
             Animal animal1 = animals.get(i);
             for (int j = 0; j < animals.size(); j++) {
                 Animal animal2 = animals.get(j);
-                if (!animal1.getClass().getSimpleName().equals(animal2.getClass().getSimpleName())) {
-                    if (animal1 instanceof Wolf) {
-                        if (animal2 instanceof Snake) {
-                            int random = ThreadLocalRandom.current().nextInt(9);
-                            if (random == 0) {
+                int random = ThreadLocalRandom.current().nextInt(100);
+                if (animal1 instanceof Wolf wolf) {
+                    for (Map.Entry<Class, Integer> diet : wolf.diet.entrySet()) {
+                        if (animal2.getClass().getSimpleName().equals(diet.getKey().getSimpleName())) {
+                            if (diet.getValue() < random) {
+                                animal1.eat(animal2);
+                                animals.remove(animal2);
+                            }
+                        }
+                    }
+                }
+                if (animal1 instanceof Bear bear) {
+                    for (Map.Entry<Class, Integer> diet : bear.diet.entrySet()) {
+                        if (animal2.getClass().getSimpleName().equals(diet.getKey().getSimpleName())) {
+                            if (diet.getValue() < random) {
+                                animal1.eat(animal2);
+                                animals.remove(animal2);
+                            }
+                        }
+                    }
+                }
+                if (animal1 instanceof Eagle eagle) {
+                    for (Map.Entry<Class, Integer> diet : eagle.diet.entrySet()) {
+                        if (animal2.getClass().getSimpleName().equals(diet.getKey().getSimpleName())) {
+                            if (diet.getValue() < random) {
+                                animal1.eat(animal2);
+                                animals.remove(animal2);
+                            }
+                        }
+                    }
+                }
+                if (animal1 instanceof Fox fox) {
+                    for (Map.Entry<Class, Integer> diet : fox.diet.entrySet()) {
+                        if (animal2.getClass().getSimpleName().equals(diet.getKey().getSimpleName())) {
+                            if (diet.getValue() < random) {
+                                animal1.eat(animal2);
+                                animals.remove(animal2);
+                            }
+                        }
+                    }
+                }
+                if (animal1 instanceof Snake snake) {
+                    for (Map.Entry<Class, Integer> diet : snake.diet.entrySet()) {
+                        if (animal2.getClass().getSimpleName().equals(diet.getKey().getSimpleName())) {
+                            if (diet.getValue() < random) {
+                                animal1.eat(animal2);
                                 animals.remove(animal2);
                             }
                         }
@@ -130,6 +170,7 @@ public class Cell {
             }
         }
     }
+
 
     public void toDieOfOverflowOrHunger() {
 
@@ -143,9 +184,6 @@ public class Cell {
         Map<String, Integer> countAnimalsOnCell = getCountAnimalsInCell();
 
         Map<String, Integer> getMax = getMaxAnimalsOnCell();
-
-//        System.out.print(countAnimalsOnCell);
-//        System.out.println(getMax);
 
         //overflow
         for (Map.Entry<String, Integer> countAnimals : countAnimalsOnCell.entrySet()) {
@@ -190,12 +228,12 @@ public class Cell {
             Map<String, String> icon = getIcon();
             for (Map.Entry<String, String> m : icon.entrySet()) {
                 if (m.getKey().equals(s)) {
-                    return m.getValue() + max;
+                    return m.getValue();
                 }
             }
         } else {
             if (countPlantations != 0) {
-                return "\uD83C\uDF40";
+                return "\uD83C\uDF3F";
             } else {
                 return "\u2796";
             }

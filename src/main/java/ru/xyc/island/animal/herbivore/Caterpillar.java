@@ -17,7 +17,7 @@ public class Caterpillar extends Herbivore {
             if (!isEat && !isMovie()) {
                 isReproduce = true;
                 fullSaturation -= 0.0005;
-                return new Caterpillar(0.01,  1, 0.15, 1);
+                return new Caterpillar(0.01, 1, 0.0025, 1);
             }
         }
         isReproduce = false;

@@ -1,8 +1,25 @@
 package ru.xyc.island.animal.predator;
 
 import ru.xyc.island.animal.Animal;
+import ru.xyc.island.animal.herbivore.*;
+
+import java.util.Map;
 
 public class Wolf extends Predator {
+
+    public Map<Class, Integer> diet = Map.of(
+            Snake.class, 10,
+            Fox.class, 10,
+            Eagle.class, 10,
+            Kangaroo.class, 20,
+            Horse.class, 30,
+            Deer.class, 40,
+            Goat.class, 60,
+            Sheep.class, 70,
+            Rabbit.class, 70,
+            Duck.class, 80
+    );
+
     public Wolf(double weight, int travelSpeed, double fullSaturation, int canLiveAfterSaturation) {
         super(weight, travelSpeed, fullSaturation, canLiveAfterSaturation);
     }
@@ -15,7 +32,7 @@ public class Wolf extends Predator {
             if (!isEat && !isMovie()) {
                 isReproduce = true;
                 this.fullSaturation -= 1;
-                return new Wolf( 50,  3, 8, 10);
+                return new Wolf(50, 3, 8, 10);
             }
         }
         isReproduce = false;
@@ -34,7 +51,7 @@ public class Wolf extends Predator {
             if (!isMovie && !isEat()) {
                 if (fullSaturation < 8) {
                     fullSaturation += animal.getWeight();
-                    if(fullSaturation >= 8) {
+                    if (fullSaturation >= 8) {
                         fullSaturation = 8;
                     }
                 }

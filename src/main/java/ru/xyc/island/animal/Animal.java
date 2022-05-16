@@ -1,9 +1,5 @@
 package ru.xyc.island.animal;
 
-import ru.xyc.island.Breedable;
-import ru.xyc.island.Eatable;
-import ru.xyc.island.Movable;
-
 import java.util.Objects;
 
 public abstract class Animal implements Breedable, Eatable, Movable {

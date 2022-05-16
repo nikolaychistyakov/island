@@ -1,7 +1,6 @@
 package ru.xyc.island.animal.herbivore;
 
 import ru.xyc.island.animal.Animal;
-import ru.xyc.island.animal.Plantation;
 
 public class Hamster extends Herbivore {
 
@@ -17,7 +16,7 @@ public class Hamster extends Herbivore {
             if (!isEat && !isMovie()) {
                 isReproduce = true;
                 fullSaturation -= 0.0005;
-                return new Hamster(0.03,  1, 0.0075, 3);
+                return new Hamster(0.03, 1, 0.0075, 3);
             }
         }
         isReproduce = false;
@@ -26,15 +25,19 @@ public class Hamster extends Herbivore {
 
     @Override
     public void eat(Object food) {
-        if (fullSaturation >= 0.0075) {
+
+        if (this.fullSaturation >= 0.0075) {
             return;
         }
 
-        if (food instanceof Plantation plantation) {
+        if (food instanceof Animal animal) {
             isEat = true;
             if (!isMovie && !isEat()) {
                 if (fullSaturation < 0.0075) {
-                    fullSaturation = 0.0075;
+                    fullSaturation += animal.getWeight();
+                    if (fullSaturation >= 0.0075) {
+                        fullSaturation = 0.0075;
+                    }
                 }
             }
         }
@@ -43,7 +46,9 @@ public class Hamster extends Herbivore {
 
     @Override
     public void movie(char direction, int distance) {
-
+        if (!isEat && !isReproduce) {
+            fullSaturation -= 0.0005;
+        }
     }
 
     @Override
